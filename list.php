@@ -36,44 +36,92 @@ $selectResult = executeQuery($selectSql);
     </header>
     <main>
     	<br><br>
-    	<!-- フォーム部分 -->
-    	<div class="forms" style="display: inline-flex;">
-        	<form action="./search.php" method="post">
-        		　ISBN<input type="text" name="isbn">
-        		　TITLE<input type="text" name="title">
-        		　価格<input type="text" name="price">
-        		　<input type="submit" name="listButton" value="検索">
+    	<?php
+    	//管理者でログインしている時の画面表示
+    	if($authInfo['authority'] == '管理者') {?>
+        	<!-- フォーム部分 -->
+        	<div class="forms" style="display: inline-flex;">
+            	<form action="./search.php" method="post">
+            		　ISBN<input type="text" name="isbn">
+            		　TITLE<input type="text" name="title">
+            		　価格<input type="text" name="price">
+            		　<input type="submit" name="listButton" value="検索">
+            	</form>
+            	<form action="./list.php" method="get">
+            		　<input type="submit" value="全件表示">
+            	</form>
+        	</div>
+        	<br><br>
+        	<!-- テーブル部分 -->
+        	<table>
+        		<tr>
+        			<th style="width: 25vw; background-color: lightblue;">ISBN</th>
+        			<th style="width: 25vw; background-color: lightblue;">TITLE</th>
+        			<th style="width: 25vw; background-color: lightblue;">価格</th>
+        			<th style="width: 25vw; background-color: lightblue;"></th>
+        		</tr>
+        		<?php
+        		while($record = mysqli_fetch_array($selectResult)) {?>
+            		<tr>
+            			<td><a href="./detail.php?isbn=<?=$record['isbn']?>&title=<?=$record['title']?>&price=<?=$record['price']?>"><?=$record['isbn']?></a></td>
+            			<td><?=$record['title']?></td>
+            			<td><?=$record['price']?>円</td>
+            			<td>
+            				<a href="./update.php?updateIsbn=<?=$record['isbn']?>" style="margin-right: 20px">変更</a>
+            				<a href="./delete.php?deleteIsbn=<?=$record['isbn']?>" style="margin-right: 20px">削除</a>
+            			</td>
+            		</tr>
+        		<?php
+        		}
+        		mysqli_free_result($selectResult);
+        		?>
+        	</table>
+    	<?php
+    	//一般ユーザでログインしている時の画面表示
+    	} elseif($authInfo['authority'] == '一般ユーザ') {?>
+        	<!-- フォーム部分 -->
+        	<div class="forms" style="display: inline-flex;">
+            	<form action="./search.php" method="post">
+            		　ISBN<input type="text" name="isbn">
+            		　TITLE<input type="text" name="title">
+            		　価格<input type="text" name="price">
+            		　<input type="submit" name="listButton" value="検索">
+            	</form>
+            	<form action="./list.php" method="get">
+            		　<input type="submit" value="全件表示">
+            	</form>
+        	</div>
+        	<br><br>
+        	<!-- テーブル部分 -->
+        	<form action="./insertIntoCart.php" method="post">
+            	<table>
+            		<tr>
+            			<th style="width: 20vw; background-color: lightblue;">ISBN</th>
+            			<th style="width: 20vw; background-color: lightblue;">TITLE</th>
+            			<th style="width: 20vw; background-color: lightblue;">価格</th>
+            			<th style="width: 20vw; background-color: lightblue;">購入数</th>
+            			<th style="width: 20vw; background-color: lightblue;"></th>
+            		</tr>
+            		<?php
+            		while($record = mysqli_fetch_array($selectResult)) {?>
+                		<tr>
+                			<td><a href="./detail.php?isbn=<?=$record['isbn']?>"><?=$record['isbn']?></a></td>
+                			<td><?=$record['title']?></td>
+                			<td><?=$record['price']?>円</td>
+                			<td><input type="number" name="quantity"></td>
+                			<td>
+                				<input type="hidden" name="insertIsbn" value="<?=$record['isbn']?>">
+                				<input type="submit" name="intoCartButton" value="カートに入れる">
+                			</td>
+                		</tr>
+            		<?php
+            		}
+            		mysqli_free_result($selectResult);
+            		?>
+            	</table>
         	</form>
-        	<form action="./list.php" method="get">
-        		　<input type="submit" value="全件表示">
-        	</form>
-    	</div>
-    	<br><br>
-    	<!-- テーブル部分 -->
-    	<table>
-    		<tr>
-    			<th style="width: 25vw; background-color: lightblue;">ISBN</th>
-    			<th style="width: 25vw; background-color: lightblue;">TITLE</th>
-    			<th style="width: 25vw; background-color: lightblue;">価格</th>
-    			<th style="width: 25vw; background-color: lightblue;">変更/削除/カートに入れる</th>
-    		</tr>
-    		<?php
-    		while($record = mysqli_fetch_array($selectResult)) {?>
-    		<tr>
-    			<td><a href="./detail.php?isbn=<?=$record['isbn']?>&title=<?=$record['title']?>&price=<?=$record['price']?>"><?=$record['isbn']?></a></td>
-    			<td><?=$record['title']?></td>
-    			<td><?=$record['price']?>円</td>
-    			<td>
-    				<a href="./update.php?updateIsbn=<?=$record['isbn']?>" style="margin-right: 20px">変更</a>
-    				<a href="./delete.php?deleteIsbn=<?=$record['isbn']?>" style="margin-right: 20px">削除</a>
-    				<a href="./insertIntoCart.php?insertIsbn=<?=$record['isbn']?>">カートに入れる</a>
-    			</td>
-    		</tr>
-    		<?php
-    		}
-    		mysqli_free_result($selectResult);
-    		?>
-    	</table>
+    	<?php
+    	}?>
     </main>
     <footer>
     	<br><br><br>

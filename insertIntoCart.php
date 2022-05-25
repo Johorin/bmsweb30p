@@ -2,23 +2,11 @@
 //セッションの利用を開始
 session_start();
 
-//セッションに登録されているユーザー情報を取得
-$userInfo = $_SESSION['userInfo'];
+//ログイン認証情報を取得する関数のインポート
+require_once 'loginAuthentication.php';
 
-if(!isset($userInfo)) { //セッションに登録されているユーザー情報が無い場合実行
-    //ログイン画面に遷移
-    header('Location: ./login.php');
-    exit();
-} else {
-    //ユーザー情報
-    switch ($userInfo['authority']) {
-        case '1':
-            $authority = '一般ユーザ';
-            break;
-        case '2':
-            $authority  = '管理者';
-    }
-}
+//インポートした関数でログイン中のユーザー名と権限を取得
+$authInfo = authenticate();
 
 //一連のDB操作処理をまとめた関数を読み込む
 require_once 'dbprocess.php';
@@ -31,7 +19,7 @@ if(!isset($_SESSION['userInfo'])) {
 }
 
 //遷移元からのISBN番号（GETパラメータ）を取得
-$isbn = $_GET['insertIsbn'];
+$isbn = $_POST['insertIsbn'];
 
 //取得したISBNの書籍情報を検索するクエリ文を設定&発行
 $selectSql = "select * from bookinfo where isbn={$isbn}";
@@ -53,11 +41,13 @@ if(!$selectResult) { //書籍情報が取得できなかった場合
 
     //その書籍情報をセッションに格納
     $_SESSION['cartInfo'][] = $addBookInfo;
+    $_SESSION['cartInfo']['quantity'] = $_POST['quantity'];
 
     //カートに追加した書籍情報をそれぞれ変数に格納
     $addIsbn = $addBookInfo['isbn'];
     $addTitle = $addBookInfo['title'];
     $addPrice = $addBookInfo['price'];
+    $quantity = $_POST['quantity'];
 }
 ?>
 <html>
@@ -67,7 +57,7 @@ if(!$selectResult) { //書籍情報が取得できなかった場合
 	</head>
     <body>
     <header>
-    	<h2 align="center">書籍販売システムWeb版 Ver.2.0</h2>
+    	<h2 align="center">書籍管理システム</h2>
     	<hr style="border: 2px solid blue;">
     	<div class="nav" style="position: absolute; top: 83px; left: 20px;">
     		<a href="./menu.php" style="margin: 0 20px 0 0;">[メニュー]</a>
@@ -75,8 +65,8 @@ if(!$selectResult) { //書籍情報が取得できなかった場合
     	</div>
     	<h3 align="center">カート追加</h3>
     	<div class="loginInfo" style="position: absolute; top: 55px; right: 60px;">
-    		<p>名前：<?=$userInfo['user']?></p>
-    		<p>権限：<?=$authority?></p>
+    		<p>名前：<?=$authInfo['userName']?></p>
+    		<p>権限：<?=$authInfo['authority']?>></p>
     	</div>
     	<hr style="border: 1px solid black;">
     </header>
@@ -87,16 +77,20 @@ if(!$selectResult) { //書籍情報が取得できなかった場合
         	<br>
         	<table>
         		<tr>
-        			<td style="background-color: lightblue;">ISBN</td>
+        			<td style="background-color: grey;">ISBN</td>
         			<td><?=$addIsbn?></td>
         		</tr>
         		<tr>
-        			<td style="background-color: lightblue;">TITLE</td>
+        			<td style="background-color: grey;">TITLE</td>
         			<td><?=$addTitle?></td>
         		</tr>
         		<tr>
-        			<td style="background-color: lightblue;">価格</td>
+        			<td style="background-color: grey;">価格</td>
         			<td><?=$addPrice?></td>
+        		</tr>
+        		<tr>
+        			<td style="background-color: grey;">購入数</td>
+        			<td><?=$quantity?>冊</td>
         		</tr>
         	</table>
         	<br>
