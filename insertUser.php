@@ -21,7 +21,6 @@ if(isset($_POST['insertUserButton'])) {
         $insertSql = "INSERT INTO userinfo VALUES('{$insertUserName}','{$insertPassword}','{$insertEmail}','{$insertAuthority}')";
         executeQuery($insertSql);
     } else {
-        $passMismatach = 1;
         header('Location: ./insertUser.php?passMismatch=1');
         exit;
     }
