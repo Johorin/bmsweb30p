@@ -8,22 +8,19 @@ require_once 'loginAuthentication.php';
 //インポートした関数でログイン中のユーザー名と権限を取得
 $authInfo = authenticate();
 
-//権限が一般ユーザーからのアクセスの際にはメニュー画面へリダイレクト
-if($authInfo === '一般ユーザ') {
+//意図していないアクセスはメニュー画面へリダイレクト
+if($authInfo === '一般ユーザ' || !isset($_POST['searchUserButton'])) {
     header('Location: ./menu.php');
     exit;
 }
 
 require_once 'dbprocess.php';
 
-$selectSql = 'SELECT user,email,authority FROM userinfo';
+$searchUserName = $_POST['searchUserName'];
+$selectSql = "SELECT user,email,authority FROM userinfo WHERE user='{$searchUserName}'";
 $selectResult = executeQuery($selectSql);
 
-$userLists = array();
-
-while($userList = mysqli_fetch_assoc($selectResult)) {
-    $userLists[] = $userList;
-}
+$userRecord = mysqli_fetch_assoc($selectResult);
 
 mysqli_free_result($selectResult);
 ?>
@@ -68,19 +65,15 @@ mysqli_free_result($selectResult);
         			<th style="width: 25vw; background-color: grey;">権限</th>
         			<th style="width: 25vw; background-color: grey;"></th>
         		</tr>
-        		<?php
-        		foreach($userLists as $record) {?>
-            		<tr>
-            			<td><a href=""><?=$record['user']?></a></td>
-            			<td><?=$record['email']?></td>
-            			<td><?=($record['authority'] === '1') ? '一般ユーザー' : '管理者'?></td>
-            			<td>
-            				<a href="./updateUser.php?updateUserName=<?=$record['user']?>" style="margin-right: 20px">変更</a>
-            				<a href="./deleteUser.php?deleteUserName=<?=$record['user']?>" style="margin-right: 20px">削除</a>
-            			</td>
-            		</tr>
-        		<?php
-        		}?>
+        		<tr>
+        			<td><a href=""><?=$userRecord['user']?></a></td>
+        			<td><?=$userRecord['email']?></td>
+        			<td><?=($userRecord['authority'] === '1') ? '一般ユーザー' : '管理者'?></td>
+        			<td>
+        				<a href="./updateUser.php?updateUserName=<?=$userRecord['user']?>" style="margin-right: 20px">変更</a>
+        				<a href="./deleteUser.php?deleteUserName=<?=$userRecord['user']?>" style="margin-right: 20px">削除</a>
+        			</td>
+        		</tr>
         	</table>
         </main>
         <footer>
