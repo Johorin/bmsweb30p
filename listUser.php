@@ -71,7 +71,7 @@ mysqli_free_result($selectResult);
         		<?php
         		foreach($userLists as $record) {?>
             		<tr>
-            			<td><a href=""><?=$record['user']?></a></td>
+            			<td><a href="./detailUser.php?detailUserName=<?=$record['user']?>"><?=$record['user']?></a></td>
             			<td><?=$record['email']?></td>
             			<td><?=($record['authority'] === '1') ? '一般ユーザー' : '管理者'?></td>
             			<td>
