@@ -14,21 +14,37 @@ if($authInfo === '一般ユーザ') {
     exit;
 }
 
-/* 送られてきたユーザーIDを元に元のデータを再形成 */
+//detailUser.phpもしくはlistUser.phpからの遷移でない場合はメニュー画面へ遷移
+if(!isset($_GET['deleteUserName'])) {
+    header('Location: ./menu.php');
+    exit;
+}
+
 require_once 'dbprocess.php';
 
-$userName = $_GET['detailUserName'];
+$deletedUserName = $_GET['deleteUserName'];
 
-$selectSql = "SELECT * FROM userinfo WHERE user='{$userName}'";
+//削除する予定のユーザーがログイン中のユーザーだった場合
+//もしくは権限が'管理者'の場合は削除処理をキャンセルしてユーザー一覧画面に遷移
+if(($authInfo['user'] === $deletedUserName) || ($deletedUserName === '管理者')) {
+    header('Location: ./listUser.php');
+    exit;
+}
+
+/* 送られてきたユーザーIDを元に削除するユーザー情報を取得 */
+$selectSql = "SELECT * FROM userinfo WHERE user='{$deletedUserName}'";
 $selectResult = executeQuery($selectSql);
-$userData = mysqli_fetch_assoc($selectResult);
+$deletedUserData = mysqli_fetch_assoc($selectResult);
 mysqli_free_result($selectResult);
 
+/* ユーザー情報削除 */
+$deleteSql = "DELETE FROM userinfo WHERE user='{$deletedUserName}'";
+executeQuery($deleteSql);
 ?>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>ユーザー詳細画面</title>
+		<title>ユーザー削除画面</title>
 	</head>
     <body>
     	<header>
@@ -38,7 +54,7 @@ mysqli_free_result($selectResult);
         		<a href="./menu.php" style="margin: 0 20px 0 0;">[メニュー]</a>
         		<a href="./listUser.php">[ユーザー一覧]</a>
         	</div>
-        	<h3 align="center">ユーザー詳細</h3>
+        	<h3 align="center">ユーザー削除</h3>
         	<div class="loginInfo" style="position: absolute; top: 55px; right: 60px;">
         		<p>名前：<?=$authInfo['userName']?></p>
         		<p>権限：<?=$authInfo['authority']?></p>
@@ -48,34 +64,29 @@ mysqli_free_result($selectResult);
         <main>
         	<center>
         		<br>
-        		<div class="actionButtons" style="display: inline-flex;">
-            		<form action="./updateUser.php" method="get">
-            			<input type="hidden" name="updateUserName" value="<?=$userName?>">
-            			<input type="submit" name="updateUserButton" value="変更" style="margin-right: 30px;">
-            		</form>
-            		<form action="./deleteUser.php" method="get">
-            			<input type="hidden" name="deleteUserName" value="<?=$userName?>">
-            			<input type="submit" name="deleteUserButton" value="削除">
-            		</form>
-        		</div>
+        		<br>
         		<table>
         			<tr>
             			<th style="width: 180px; background-color: grey; text-align: left; padding-left: 20px;">ユーザー</th>
-            			<td style="width: 200px;"><?=$userData['user']?></td>
+            			<td style="width: 200px;"><?=$deletedUserData['user']?></td>
         			</tr>
         			<tr>
             			<th style="width: 180px; background-color: grey; text-align: left; padding-left: 20px;">パスワード</th>
-            			<td style="width: 200px;"><?=$userData['password']?></td>
+            			<td style="width: 200px;"><?=$deletedUserData['password']?></td>
         			</tr>
         			<tr>
             			<th style="width: 180px; background-color: grey; text-align: left; padding-left: 20px;">Eメール</th>
-            			<td style="width: 200px; white-space: nowrap;"><?=$userData['email']?></td>
+            			<td style="width: 200px; white-space: nowrap;"><?=$deletedUserData['email']?></td>
         			</tr>
         			<tr>
             			<th style="width: 180px; background-color: grey; text-align: left; padding-left: 20px;">権限</th>
-            			<td style="width: 200px;"><?=($userData['authority'] === '1') ? '一般ユーザ' : '管理者'?></td>
+            			<td style="width: 200px;"><?=($deletedUserData['authority'] === '1') ? '一般ユーザ' : '管理者'?></td>
         			</tr>
         		</table>
+        		<br>
+        		<p>上記データを削除しました。</p>
+        		<br>
+        		<a href="./listUser.php">ユーザー一覧へ戻る</a>
         	</center>
         </main>
         <footer>

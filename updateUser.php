@@ -47,7 +47,7 @@ elseif(isset($_POST['updateUserButton'])) {
         exit;
     }
 
-    $updateSql = "UPDATE userinfo SET password='{$newPassword}',email='{$newEmail}',authority='{$newAuthority}' WHERE user='{$updateUserName}'";
+    $updateSql = "UPDATE userinfo SET password='{$newPassword}',email='{$newEmail}',authority={$newAuthority} WHERE user='{$updateUserName}'";
     executeQuery($updateSql);
 
     /* 変更後のユーザー情報を取得 */
@@ -123,7 +123,7 @@ elseif(isset($_POST['updateUserButton'])) {
         					<th style="width: 180px; background-color: grey; text-align: left; padding-left: 20px;">権限</th>
         					<td style="width: 200px;"><?=($userData['authority'] === '1') ? '一般ユーザ' : '管理者'?></td>
         					<td style="width: 200px;">
-        						<select name="newAutority" style="width: 100%">
+        						<select name="newAuthority" style="width: 100%">
         							<option value="1" selected>一般ユーザ</option>
         							<option value="2">管理者</option>
         						</select>
