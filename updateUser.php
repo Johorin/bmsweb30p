@@ -9,7 +9,7 @@ require_once 'loginAuthentication.php';
 $authInfo = authenticate();
 
 //権限が一般ユーザーからのアクセスの際にはエラー画面へリダイレクト
-if($authInfo === '一般ユーザ') {
+if($authInfo['authority'] === '一般ユーザ') {
     header('Location: ./error.php?errNum=20');
     exit;
 }

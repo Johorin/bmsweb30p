@@ -14,13 +14,17 @@ if($authInfo['authority'] === '管理者') {
     exit;
 }
 
+/* orderinfoやbookinfoテーブルから必要な情報を取得 */
+//一連のDB操作関数をインポート
 require_once 'dbprocess.php';
-
+//orderinfoテーブルとbookinfoテーブルを内部結合して欲しいデータを取得
 $selectSql = "SELECT A.title,B.quantity,B.date FROM bookinfo A inner join orderinfo B on A.isbn=B.isbn WHERE B.user='{$authInfo['userName']}'";
 $selectResult = executeQuery($selectSql);
+//購入履歴のレコードをまとめる配列を宣言
 $orderLists = array();
-
+//配列$orderListsのインデックス番号を明示的に作る
 $key = 0;
+//取得してきたデータを元にdateを整えながらorderListsに格納していく
 while($orderList = mysqli_fetch_assoc($selectResult)) {
     $orderLists[$key]['title'] = $orderList['title'];
     $orderLists[$key]['quantity'] = $orderList['quantity'];
@@ -28,6 +32,8 @@ while($orderList = mysqli_fetch_assoc($selectResult)) {
 
     $key++;
 }
+
+mysqli_free_result($selectResult);
 ?>
 <html>
 	<head>

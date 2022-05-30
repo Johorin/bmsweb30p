@@ -22,7 +22,7 @@ if(!isset($userInfo)) { //セッションに登録されているユーザー情
 
 //orderinfoテーブルを検索し登録されている書籍情報を格納
 require_once 'dbprocess.php';   //一連のDB操作処理をまとめた関数を読み込む
-$selectSql = "SELECT user,title,date FROM orderinfo A inner join bookinfo B on A.isbn=B.isbn where user='{$userInfo['user']}' order by date";
+$selectSql = "SELECT A.user,B.title,A.quantity,A.date FROM orderinfo A inner join bookinfo B on A.isbn=B.isbn ORDER BY date";
 $selectResult = executeQuery($selectSql);
 
 //検索結果の取得に失敗した場合は独自エラー
@@ -32,10 +32,16 @@ if(!$selectResult) {
 
 //購入済みの書籍情報レコードを配列$boughtBooksに逐次格納
 $boughtBooks = array();
+//配列$boughtBooksのインデックス番号を明示的に作る
+$key = 0;
 while($boughtBook = mysqli_fetch_assoc($selectResult)) {
-    $boughtBooks[] =$boughtBook;
-}
+    $boughtBooks[$key]['user'] = $boughtBook['user'];
+    $boughtBooks[$key]['title'] = $boughtBook['title'];
+    $boughtBooks[$key]['quantity'] = $boughtBook['quantity'];
+    $boughtBooks[$key]['date'] = str_replace('-', '／', $boughtBook['date']);
 
+    $key++;
+}
 //検索結果セットの開放
 mysqli_free_result($selectResult);
 ?>
@@ -63,15 +69,17 @@ mysqli_free_result($selectResult);
     		<br><br>
     		<table>
     			<tr>
-    				<th style="width: 25vw; background-color: lightblue;">ユーザー</th>
-    				<th style="width: 25vw; background-color: lightblue;">TITLE</th>
-    				<th style="width: 25vw; background-color: lightblue;">注文日</th>
+    				<th style="width: 20vw; background-color: grey;">ユーザー</th>
+    				<th style="width: 20vw; background-color: grey;">TITLE</th>
+    				<th style="width: 20vw; background-color: grey;">数量</th>
+    				<th style="width: 20vw; background-color: grey;">注文日</th>
     			</tr>
     			<?php
     			foreach($boughtBooks as $record) {?>
-    			<tr>
+    			<tr style="text-align: center;">
     				<td><?=$record['user']?></td>
     				<td><?=$record['title']?></td>
+    				<td><?=$record['quantity']?>冊</td>
     				<td><?=$record['date']?></td>
     			</tr>
     			<?php
