@@ -23,7 +23,6 @@ $isbn = $_POST['insertIsbn'];
 
 //取得したISBNの書籍情報を検索するクエリ文を設定&発行
 $selectSql = "select * from bookinfo where isbn='{$isbn}'";
-var_dump($_POST);
 $selectResult = executeQuery($selectSql);
 
 if(!$selectResult) { //書籍情報が取得できなかった場合
@@ -36,13 +35,13 @@ if(!$selectResult) { //書籍情報が取得できなかった場合
 } else {    //書籍情報が取得できた場合
     //書籍情報を連想配列として取得
     $addBookInfo = mysqli_fetch_assoc($selectResult);
+    $addBookInfo['quantity'] = $_POST['quantity'];
 
     //メモリ開放
     mysqli_free_result($selectResult);
 
     //その書籍情報をセッションに格納
     $_SESSION['cartInfo'][] = $addBookInfo;
-    $_SESSION['cartInfo']['quantity'] = $_POST['quantity'];
 
     //カートに追加した書籍情報をそれぞれ変数に格納
     $addIsbn = $addBookInfo['isbn'];

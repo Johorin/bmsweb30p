@@ -97,32 +97,32 @@ mysqli_free_result($selectResult);
                 	</form>
             	</div>
             	<br><br>
-            	<!-- テーブル部分 -->
-            	<form action="./insertIntoCart.php" method="post">
-                	<table>
+                <!-- テーブル部分 -->
+            	<table>
+            		<tr>
+            			<th style="width: 20vw; background-color: lightblue;">ISBN</th>
+            			<th style="width: 20vw; background-color: lightblue;">TITLE</th>
+            			<th style="width: 20vw; background-color: lightblue;">価格</th>
+            			<th style="width: 20vw; background-color: lightblue;">購入数</th>
+            			<th style="width: 20vw; background-color: lightblue;"></th>
+            		</tr>
+            		<?php
+            		foreach($bookLists as $record) {?>
                 		<tr>
-                			<th style="width: 20vw; background-color: lightblue;">ISBN</th>
-                			<th style="width: 20vw; background-color: lightblue;">TITLE</th>
-                			<th style="width: 20vw; background-color: lightblue;">価格</th>
-                			<th style="width: 20vw; background-color: lightblue;">購入数</th>
-                			<th style="width: 20vw; background-color: lightblue;"></th>
-                		</tr>
-                		<?php
-                		foreach($bookLists as $record) {?>
-                    		<tr>
-                    			<td><a href="./detail.php?isbn=<?=$record['isbn']?>"><?=$record['isbn']?></a></td>
-                    			<td><?=$record['title']?></td>
-                    			<td><?=$record['price']?>円</td>
+                			<td><a href="./detail.php?isbn=<?=$record['isbn']?>"><?=$record['isbn']?></a></td>
+                			<td><?=$record['title']?></td>
+                			<td><?=$record['price']?>円</td>
+            				<form action="./insertIntoCart.php" method="post">
                     			<td><input type="number" name="quantity"></td>
                     			<td>
                     				<input type="hidden" name="insertIsbn" value="<?=$record['isbn']?>">
                     				<input type="submit" name="intoCartButton" value="カートに入れる">
                     			</td>
-                    		</tr>
-                		<?php
-                		}?>
-                	</table>
-            	</form>
+                    		</form>
+                		</tr>
+            		<?php
+            		}?>
+            	</table>
         	<?php
         	}?>
         </main>

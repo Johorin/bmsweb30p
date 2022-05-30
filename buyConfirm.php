@@ -49,14 +49,14 @@ require_once 'dbprocess.php';   //一連のDB操作処理をまとめた関数�
 foreach($cartInfo as $boughtBook) {
     $user = $userInfo['user'];
     $isbn = $boughtBook['isbn'];
-    $quantity = 1;
+    $quantity = $boughtBook['quantity'];
     $date = date('Y-m-d');
 
     $insertSql = "insert into orderinfo(user,isbn,quantity,date) values('{$user}','{$isbn}','{$quantity}','{$date}')";
     executeQuery($insertSql);
 
     //価格を合計
-    $total += $boughtBook['price'];
+    $total += $boughtBook['price'] * $boughtBook['quantity'];
 }
 
 /* 自動メール送信処理 */
@@ -115,9 +115,11 @@ unset($_SESSION['cartInfo']);
     		<br>
     		<table>
     			<tr>
-    				<th style="width: 25vw; background-color: lightblue;">ISBN</th>
-    				<th style="width: 25vw; background-color: lightblue;">TITLE</th>
-    				<th style="width: 25vw; background-color: lightblue;">価格</th>
+    				<th style="width: 20vw; background-color: grey;">ISBN</th>
+    				<th style="width: 20vw; background-color: grey;">TITLE</th>
+    				<th style="width: 20vw; background-color: grey;">価格</th>
+    				<th style="width: 20vw; background-color: grey;">購入数</th>
+    				<th style="width: 20vw; background-color: grey;">小計</th>
     			</tr>
     			<?php
             		foreach($cartInfo as $bookData) {?>
@@ -125,6 +127,8 @@ unset($_SESSION['cartInfo']);
             			<td><?=$bookData['isbn']?></td>
             			<td><?=$bookData['title']?></td>
             			<td><?=$bookData['price']?>円</td>
+            			<td><?=$bookData['quantity']?>冊</td>
+            			<td><?=$bookData['price'] * $bookData['quantity']?>円</td>
             		</tr>
         		<?php
         		}?>

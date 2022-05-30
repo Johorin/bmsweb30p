@@ -28,16 +28,16 @@ if(!isset($userInfo)) { //セッションに登録されているユーザー情
 }
 
 //削除リンクから戻ってきている場合の処理
-if(isset($_GET['deleteIsbn'])) {
+if(isset($_GET['deleteKey'])) {
     //指定の削除番号のデータを削除
-    unset($_SESSION['cartInfo'][$_GET['deleteIsbn']]);
+    unset($_SESSION['cartInfo'][$_GET['deleteKey']]);
 }
 
 //カートの中の書籍の価格を合計
 $total = 0;
 if(isset($_SESSION['cartInfo'])) {
     foreach($_SESSION['cartInfo'] as $bookData) {
-        $total += $bookData['price'];
+        $total += $bookData['price'] * $bookData['quantity'];
     }
 }
 ?>
@@ -67,19 +67,21 @@ if(isset($_SESSION['cartInfo'])) {
         	<!-- テーブル部分 -->
         	<table>
         		<tr>
-        			<th style="width: 25vw; background-color: lightblue;">ISBN</th>
-        			<th style="width: 25vw; background-color: lightblue;">TITLE</th>
-        			<th style="width: 25vw; background-color: lightblue;">価格</th>
-        			<th style="width: 25vw; background-color: lightblue;">削除</th>
+        			<th style="width: 20vw; background-color: grey;">ISBN</th>
+        			<th style="width: 20vw; background-color: grey;">TITLE</th>
+        			<th style="width: 20vw; background-color: grey;">価格</th>
+        			<th style="width: 20vw; background-color: grey;">購入数</th>
+        			<th style="width: 20vw; background-color: grey;">削除</th>
         		</tr>
         		<?php
         		if(isset($_SESSION['cartInfo'])) {
-            		foreach($_SESSION['cartInfo'] as $bookData) {?>
+            		foreach($_SESSION['cartInfo'] as $key => $bookData) {?>
             		<tr>
             			<td><a href="./detail.php?isbn=<?=$bookData['isbn']?>"><?=$bookData['isbn']?></a></td>
             			<td><?=$bookData['title']?></td>
             			<td><?=$bookData['price']?>円</td>
-            			<td><a href="./showCart.php?deleteIsbn=<?=$bookData['isbn']?>">削除</a></td>
+            			<td><?=$bookData['quantity']?>冊</td>
+            			<td><a href="./showCart.php?deleteKey=<?=$key?>">削除</a></td>
             		</tr>
             		<?php
             		}
