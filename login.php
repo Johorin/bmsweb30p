@@ -67,7 +67,7 @@ if(isset($_POST['loginButton'])) {  //ログインボタンからのアクセス
             		</tr>
             		<tr>
             			<td style="width: 100px; background-color: lightblue;">パスワード</td>
-            			<td><input type="passwprd" name="pass" value="<?=$pass?>"></td>
+            			<td><input type="password" name="pass" value="<?=$pass?>"></td>
             		</tr>
             	</table>
         		<br><br>

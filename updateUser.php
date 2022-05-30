@@ -8,9 +8,9 @@ require_once 'loginAuthentication.php';
 //インポートした関数でログイン中のユーザー名と権限を取得
 $authInfo = authenticate();
 
-//権限が一般ユーザーからのアクセスの際にはメニュー画面へリダイレクト
+//権限が一般ユーザーからのアクセスの際にはエラー画面へリダイレクト
 if($authInfo === '一般ユーザ') {
-    header('Location: ./menu.php');
+    header('Location: ./error.php?errNum=20');
     exit;
 }
 

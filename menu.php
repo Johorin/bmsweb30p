@@ -48,7 +48,7 @@ $authInfo = authenticate();
         			<br><br>
         			<p><a href="./list.php">【書籍一覧】</a></p>
         			<p><a href="./showCart.php">【カート状況確認】</a></p>
-        			<p><a href="./.php">【購入履歴】</a></p>
+        			<p><a href="./orderHistory.php">【購入履歴】</a></p>
         			<br>
         			<p><a href="./changePassword.php">【パスワード変更】</a></p>
         			<p><a href="./logout.php">【ログアウト】</a></p>
