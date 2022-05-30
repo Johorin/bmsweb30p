@@ -35,7 +35,7 @@ if(isset($_POST['changePassButton'])) {
         //セッションに登録されているパスワードも更新
         $_SESSION['userInfo']['password'] = $newPass;
 
-        //パスワードの更新後はメニュー画面に遷移
+        //パスワードを更新したことを伝えるメッセージを表示するかどうかを判定するフラグを立ててメニュー画面に遷移
         header('Location: ./menu.php?updatedPass=1');
         exit;
     }

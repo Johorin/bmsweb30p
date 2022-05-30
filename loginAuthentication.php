@@ -1,4 +1,9 @@
 <?php
+/*
+ * 関数名：authenticate
+ * 引数：なし
+ * 戻り値：ユーザーIDと具体的な権限名の連想配列$authInfo
+ */
 function authenticate() {
     //セッションに登録されているユーザー情報を取得
     $userInfo = $_SESSION['userInfo'];

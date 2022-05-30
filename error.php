@@ -79,6 +79,24 @@ switch($errNum) {
     case 19:
         $errMsg = '初期データファイルが無い為、登録は行えません。';
         $linkedTo = 'menu';
+        break;
+    /* ここからオリジナル */
+    case 20:
+        $errMsg = 'アクセス権がないページへの遷移はできません。';
+        $linkedTo = 'menu';
+        break;
+    case 21:
+        $errMsg = '特定のページからのみ遷移可能なページに遷移しようとしました。';
+        $linkedTo = 'menu';
+        break;
+    case 22:
+        $errMsg = 'ログイン中のユーザー情報は削除できません。';
+        $linkedTo = 'menu';
+        break;
+    case 23:
+        $errMsg = "権限が'管理者'のユーザー情報は削除できません。";
+        $linkedTo = 'menu';
+        break;
 }
 ?>
 <html>

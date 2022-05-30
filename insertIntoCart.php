@@ -8,9 +8,6 @@ require_once 'loginAuthentication.php';
 //インポートした関数でログイン中のユーザー名と権限を取得
 $authInfo = authenticate();
 
-//一連のDB操作処理をまとめた関数を読み込む
-require_once 'dbprocess.php';
-
 //セッション情報が切れていないかチェック
 if(!isset($_SESSION['userInfo'])) {
     //切れてたらエラー番号13とともにエラーページへ遷移
@@ -18,11 +15,15 @@ if(!isset($_SESSION['userInfo'])) {
     exit();
 }
 
+//一連のDB操作処理をまとめた関数を読み込む
+require_once 'dbprocess.php';
+
 //遷移元からのISBN番号（GETパラメータ）を取得
 $isbn = $_POST['insertIsbn'];
 
 //取得したISBNの書籍情報を検索するクエリ文を設定&発行
-$selectSql = "select * from bookinfo where isbn={$isbn}";
+$selectSql = "select * from bookinfo where isbn='{$isbn}'";
+var_dump($_POST);
 $selectResult = executeQuery($selectSql);
 
 if(!$selectResult) { //書籍情報が取得できなかった場合
@@ -66,7 +67,7 @@ if(!$selectResult) { //書籍情報が取得できなかった場合
     	<h3 align="center">カート追加</h3>
     	<div class="loginInfo" style="position: absolute; top: 55px; right: 60px;">
     		<p>名前：<?=$authInfo['userName']?></p>
-    		<p>権限：<?=$authInfo['authority']?>></p>
+    		<p>権限：<?=$authInfo['authority']?></p>
     	</div>
     	<hr style="border: 1px solid black;">
     </header>

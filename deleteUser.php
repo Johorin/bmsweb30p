@@ -8,26 +8,32 @@ require_once 'loginAuthentication.php';
 //インポートした関数でログイン中のユーザー名と権限を取得
 $authInfo = authenticate();
 
-//権限が一般ユーザーからのアクセスの際にはメニュー画面へリダイレクト
+//権限が一般ユーザーからのアクセスの際にはエラー画面へリダイレクト
 if($authInfo === '一般ユーザ') {
-    header('Location: ./menu.php');
+    header('Location: ./error.php?errNum=20');
     exit;
 }
 
-//detailUser.phpもしくはlistUser.phpからの遷移でない場合はメニュー画面へ遷移
+//detailUser.phpもしくはlistUser.phpからの遷移でない場合はエラー画面へ遷移
 if(!isset($_GET['deleteUserName'])) {
-    header('Location: ./menu.php');
+    header('Location: ./error.php?errNum=21');
     exit;
 }
 
+//一連のDB操作処理関数のインポート
 require_once 'dbprocess.php';
 
+//送られてきた削除対象のユーザーIDを取得
 $deletedUserName = $_GET['deleteUserName'];
 
-//削除する予定のユーザーがログイン中のユーザーだった場合
-//もしくは権限が'管理者'の場合は削除処理をキャンセルしてユーザー一覧画面に遷移
-if(($authInfo['user'] === $deletedUserName) || ($deletedUserName === '管理者')) {
-    header('Location: ./listUser.php');
+//削除する予定のユーザーがログイン中のユーザーだった場合は削除処理をキャンセルしてエラー画面に遷移
+if($authInfo['user'] === $deletedUserName) {
+    header('Location: ./error.php?errNum=22');
+    exit;
+}
+//権限が'管理者'の場合は削除処理をキャンセルしてエラー画面に遷移
+if($deletedUserName === '管理者') {
+    header('Location: ./error.php?errNum=23');
     exit;
 }
 

@@ -8,11 +8,18 @@ require_once 'loginAuthentication.php';
 //インポートした関数でログイン中のユーザー名と権限を取得
 $authInfo = authenticate();
 
+/* 表示する書籍一覧を取得 */
 require_once 'dbprocess.php';
 
 $selectSql = "SELECT * FROM bookinfo ORDER BY isbn ASC";
-
 $selectResult = executeQuery($selectSql);
+
+$bookLists = array();
+
+while($bookList = mysqli_fetch_assoc($selectResult)) {
+    $bookLists[] = $bookList;
+}
+mysqli_free_result($selectResult);
 ?>
 <html>
 	<head>
@@ -61,7 +68,7 @@ $selectResult = executeQuery($selectSql);
             			<th style="width: 25vw; background-color: lightblue;"></th>
             		</tr>
             		<?php
-            		while($record = mysqli_fetch_array($selectResult)) {?>
+                	foreach($bookLists as $record) {?>
                 		<tr>
                 			<td><a href="./detail.php?isbn=<?=$record['isbn']?>&title=<?=$record['title']?>&price=<?=$record['price']?>"><?=$record['isbn']?></a></td>
                 			<td><?=$record['title']?></td>
@@ -72,9 +79,7 @@ $selectResult = executeQuery($selectSql);
                 			</td>
                 		</tr>
             		<?php
-            		}
-            		mysqli_free_result($selectResult);
-            		?>
+            		}?>
             	</table>
         	<?php
         	//一般ユーザでログインしている時の画面表示
@@ -103,7 +108,7 @@ $selectResult = executeQuery($selectSql);
                 			<th style="width: 20vw; background-color: lightblue;"></th>
                 		</tr>
                 		<?php
-                		while($record = mysqli_fetch_array($selectResult)) {?>
+                		foreach($bookLists as $record) {?>
                     		<tr>
                     			<td><a href="./detail.php?isbn=<?=$record['isbn']?>"><?=$record['isbn']?></a></td>
                     			<td><?=$record['title']?></td>
@@ -115,9 +120,7 @@ $selectResult = executeQuery($selectSql);
                     			</td>
                     		</tr>
                 		<?php
-                		}
-                		mysqli_free_result($selectResult);
-                		?>
+                		}?>
                 	</table>
             	</form>
         	<?php

@@ -14,6 +14,7 @@ if($authInfo === '一般ユーザ') {
     exit;
 }
 
+//一連のDB操作処理関数のインポート
 require_once 'dbprocess.php';
 
 //detailUser.phpもしくはlistUser.phpからの遷移の場合の処理
@@ -47,6 +48,7 @@ elseif(isset($_POST['updateUserButton'])) {
         exit;
     }
 
+    //変更クエリ発行
     $updateSql = "UPDATE userinfo SET password='{$newPassword}',email='{$newEmail}',authority={$newAuthority} WHERE user='{$updateUserName}'";
     executeQuery($updateSql);
 
@@ -57,9 +59,8 @@ elseif(isset($_POST['updateUserButton'])) {
     $updatedUserData = mysqli_fetch_assoc($selectResult);
     mysqli_free_result($selectResult);
 
-    //パスワードを文字数分'*'で置換処理
+    //パスワードをその文字数分'*'で置換処理
     $secretPass = '';
-
     for($tmp = 0; $tmp < strlen($updatedUserData['password']); $tmp++) {
         $secretPass .= '*';
     }

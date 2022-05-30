@@ -8,22 +8,20 @@ require_once 'loginAuthentication.php';
 //インポートした関数でログイン中のユーザー名と権限を取得
 $authInfo = authenticate();
 
-//権限が一般ユーザーからのアクセスの際にはメニュー画面へリダイレクト
+//権限が一般ユーザーからのアクセスの際にはエラー画面へリダイレクト
 if($authInfo === '一般ユーザ') {
-    header('Location: ./menu.php');
+    header('Location: ./error.php?errNum=20');
     exit;
 }
 
-/* 送られてきたユーザーIDを元に元のデータを再形成 */
+/* 送られてきたユーザーIDを元に表示するデータを取得 */
 require_once 'dbprocess.php';
 
 $userName = $_GET['detailUserName'];
-
 $selectSql = "SELECT * FROM userinfo WHERE user='{$userName}'";
 $selectResult = executeQuery($selectSql);
 $userData = mysqli_fetch_assoc($selectResult);
 mysqli_free_result($selectResult);
-
 ?>
 <html>
 	<head>
